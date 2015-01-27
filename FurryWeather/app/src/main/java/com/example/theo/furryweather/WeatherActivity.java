@@ -2,6 +2,7 @@ package com.example.theo.furryweather;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -23,6 +24,7 @@ public class WeatherActivity extends ActionBarActivity {
                     .commit();
         }
 
+        this.startService(new Intent(this,WeatherService.class));
 
     }
 

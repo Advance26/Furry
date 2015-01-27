@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Simple Weather</string>
+    <string name="app_name">Weather</string>
     <string name="change_city">Change city</string>
 
     <!-- Put your own APP ID here -->
-    <string name="open_weather_maps_app_id">11111</string>
+    <string name="open_weather_maps_app_id">8955c24f6c157687b54b141b24c893e5</string>
 
     <string name="weather_sunny">&#xf00d;</string>
     <string name="weather_clear_night">&#xf02e;</string>
