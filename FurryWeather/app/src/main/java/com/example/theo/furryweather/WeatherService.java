@@ -51,8 +51,8 @@ public class WeatherService extends Service {
     public void onCreate(){
         Toast.makeText(this,"Service created",Toast.LENGTH_SHORT).show();
         locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,0,onLocationChange);
-        locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,0,onLocationChange);
+        locationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,5,onLocationChange);
+        locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,5,onLocationChange);
         super.onCreate();
     }
     @Override
@@ -65,7 +65,6 @@ public class WeatherService extends Service {
     public int onStartCommand(Intent intent,int flags,int startId){
         //Seems to be the new method the other one is deprecated
         Toast.makeText(this,"Service started",Toast.LENGTH_SHORT).show();
-
         //return START_STICKY;
         return super.onStartCommand(intent,flags,startId);
     }

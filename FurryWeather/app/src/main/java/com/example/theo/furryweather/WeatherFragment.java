@@ -55,14 +55,36 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
-        updateWeatherData(new CityPreference(getActivity()).getCity());
+        updateWeatherDataCity(new CityPreference(getActivity()).getCity());
     }
 
 
-    private void updateWeatherData(final String city){
+    private void updateWeatherDataCity(final String city){
         new Thread(){
             public void run(){
                 final JSONObject json = RemoteFetch.getJSON(getActivity(), city);
+                if(json == null){
+                    handler.post(new Runnable(){
+                        public void run(){
+                            Toast.makeText(getActivity(),
+                                    getActivity().getString(R.string.place_not_found),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    handler.post(new Runnable(){
+                        public void run(){
+                            renderWeather(json);
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+    private void updateWeatherDataLocation(final String latitude, final String longitude){
+        new Thread(){
+            public void run(){
+                final JSONObject json = RemoteFetch.getJSON(getActivity(), latitude,longitude);
                 if(json == null){
                     handler.post(new Runnable(){
                         public void run(){
@@ -141,7 +163,7 @@ public class WeatherFragment extends Fragment {
     }
 
     public void changeCity(String city){
-        updateWeatherData(city);
+        updateWeatherDataCity(city);
     }
 
 }
