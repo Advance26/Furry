@@ -17,7 +17,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table weather ( id integer primary key autoincremennt, " +
+        db.execSQL("create table weather ( id integer primary key autoincrement, " +
                 "city text, dataDate text, temperature real, wind real, condition text, " +
                 "description text, humidity real);");
     }
@@ -28,3 +28,4 @@ public class DBManager extends SQLiteOpenHelper {
         onCreate(db);
     }
 }
+//create table weather ( id integer primary key autoincrement, city text, dataDate text, temperature real, wind real, condition text, description text, humidity real);

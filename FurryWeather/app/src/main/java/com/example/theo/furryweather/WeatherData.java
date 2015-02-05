@@ -12,7 +12,7 @@ public class WeatherData {
     private String condition;
     private String description;
     private double humidity;
-
+    public WeatherData(){}
     public WeatherData(int id, String city, String date, double temperature, double wind, String condition, String description, double humidity) {
         this.id = id;
         this.city = city;

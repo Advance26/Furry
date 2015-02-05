@@ -50,9 +50,18 @@ public class WeatherService extends Service {
     @Override
     public void onCreate(){
         Toast.makeText(this,"Service created",Toast.LENGTH_SHORT).show();
+        //Gestion geolocalisation
         locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,5,onLocationChange);
         locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,5,onLocationChange);
+
+        //Gestion DB
+        WeatherDataSource wds = new WeatherDataSource(this.getBaseContext());
+        wds.open();
+
+        wds.close();
+
+
         super.onCreate();
     }
     @Override
