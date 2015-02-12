@@ -37,14 +37,14 @@ public class WeatherDataSource {
 
     public void insertWDS(WeatherData wd){
         ContentValues cv = new ContentValues();
-        cv.put("id",wd.getId());
+        //On ne gere pas les id c'est autoincrement
         cv.put("city",wd.getCity());
         cv.put("dataDate",wd.getDate());
         cv.put("temperature",wd.getTemperature());
         cv.put("wind",wd.getWind());
         cv.put("condition",wd.getCondition());
         cv.put("description",wd.getDescription());
-        cv.put("humudity",wd.getHumidity());
+        cv.put("humidity",wd.getHumidity());
 
         database.insert("weather",null,cv);
 
@@ -52,9 +52,12 @@ public class WeatherDataSource {
 
     public ArrayList<WeatherData> getNLastDaysAverage(int N){
         ArrayList<WeatherData> out = new ArrayList<>();
-
-        String query = "Select * from weather group by  limit = "+N;
-        Cursor cur = database.rawQuery(query,allColumns);
+        Log.w("WeatherDataSource","Before the while");
+        String query = "select id,city,dataDate,temperature," +
+                "wind,condition,description,humidity from weather" +
+                " order by dataDate DESC limit "+N;
+        //Pas de ';' en fin de requete
+        Cursor cur = database.rawQuery(query,new String[]{});
 
         int i = 0;
         while(i < cur.getCount()){

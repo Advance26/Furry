@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.Toast;
 
 
 public class WeatherActivity extends ActionBarActivity {
@@ -37,23 +41,24 @@ public class WeatherActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
 		/*int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);*/
         if(item.getItemId() == R.id.change_city){
-            showInputDialog();
+            showCityDialog();
+        }
+        if(item.getItemId() == R.id.change_localisationMode){
+            showLocalisationDialog();
         }
         return false;
 
     }
 
 
-    private void showInputDialog(){
+    private void showCityDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Change city");
         final EditText input = new EditText(this);
@@ -68,11 +73,44 @@ public class WeatherActivity extends ActionBarActivity {
         builder.show();
     }
 
-    public void changeCity(String city){
-        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+    public void changeCity(String city) {
+        WeatherFragment wf = (WeatherFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.container);
         wf.changeCity(city);
-        new CityPreference(this).setCity(city);
+        new WeatherPreference(this).setCity(city);
+    }
+
+    public void showLocalisationDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Localisation Settings");
+        builder.setMessage("Geolocalisation ");
+        final Switch sw = new Switch(this);
+        builder.setView(sw);
+
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    changeLocMode(true);
+                }
+                else{
+                    changeLocMode(false);
+                }
+            }
+        });
+        builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Rien pour le moment ^^
+            }
+        });
+
+        builder.show();
+    }
+
+    public void changeLocMode(boolean a){
+        new WeatherPreference(this).setGeoLoc(a);
+        Toast.makeText(this,"GeoLoc is : "+a,Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -55,7 +55,7 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
-        updateWeatherDataCity(new CityPreference(getActivity()).getCity());
+        updateWeatherDataCity(new WeatherPreference(getActivity()).getCity());
     }
 
 

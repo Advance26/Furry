@@ -6,24 +6,24 @@ import android.content.SharedPreferences;
 /**
  * Created by Theo on 23/01/2015.
  */
-public class CityPreference {
+public class WeatherPreference {
 
     SharedPreferences prefs;
 
-    public CityPreference(Activity activity){
+    public WeatherPreference(Activity activity){
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
     }
-
-    // If the user has not chosen a city yet, return
-    // Sydney as the default city
     public String getCity(){
-        //return prefs.getString("city", "Jerusalem, IS");
-        //return prefs.getString("city", "Sydney, AU");
         return prefs.getString("city", "Paris, FR");
     }
-
-    void setCity(String city){
+    public void setCity(String city){
         prefs.edit().putString("city", city).commit();
     }
 
+    public void setGeoLoc(boolean a){
+       prefs.edit().putBoolean("geoLoc",a);
+    }
+    public boolean getGeoLoc(){
+        return prefs.getBoolean("geoLoc",true);
+    }
 }
