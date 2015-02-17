@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -28,6 +29,10 @@ public class WeatherActivity extends ActionBarActivity {
         }
 
         this.startService(new Intent(this,WeatherService.class));
+
+
+        WeatherNotification test = new WeatherNotification();
+        test.sendBasicNotification();
     }
 
     @Override

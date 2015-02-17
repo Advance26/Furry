@@ -3,32 +3,32 @@ package com.example.theo.furryweather;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
+import android.content.Intent;
 
 
 /**
  * Created by Theo on 12/02/2015.
  */
-public class WeatherNotification extends WeatherActivity{
+public class WeatherNotification extends Activity{
 
-    private NotificationCompat builder;
-    private Notification notification;
+    public void sendBasicNotification(String eventtext, Context ctx){
+        // Set the icon, scrolling text and timestamp
+        Notification notification = new Notification(R.drawable.ic_launcher,
+                "hey", System.currentTimeMillis());
 
-    public WeatherNotification(){
+        // The PendingIntent to launch our activity if the user selects this
+        // notification
+        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
+                new Intent(ctx, WeatherActivity.class), 0);
 
-    }
+        // Set the info for the views that show in the notification panel.
+        notification.setLatestEventInfo(ctx, "Title", eventtext,
+                contentIntent);
 
-    public void sendBasicNotification(String title, String text){
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setAutoCancel(true);
-        builder.setContentTitle(title);
-        builder.setContentText(text);
-        builder.setSmallIcon(R.drawable.ic_launcher);
-
-        Notification notification = builder.build();
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(8, notification);
+        // Send the notification.
+        mNM.notify("Title", 0, notification);
     }
 
 }
