@@ -1,5 +1,10 @@
 package com.example.theo.furryweather;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,13 +21,13 @@ public class LDE_VDA {
         return 0;
     }
 
-    public int computeShort(ArrayList<Double> data){
+    public int computeShort(ArrayList<Double> data,Context context){
         Log.d("LDE_VDA","Computing data...");
         if(data.size() < 1)return -1;
         else if(data.size() == 1)return 0;
         Log.d("LDE_VDA",data.toString());
-        double lastValue = data.get(data.size()-1);
-        data.remove(data.size()-1);
+        double lastValue = data.get(0);
+        data.remove(0);
         double moyenne = 0;
         double nbValue = 0;
         for(int i=0; i<data.size();i++){
@@ -44,8 +49,19 @@ public class LDE_VDA {
         if(lastValue > (moyenne + pourcentage) || lastValue < (moyenne - pourcentage)){
             //Trigger the variation
             Log.d("LDE_VDA","Variation detectée !");
+            sendNotif(context,"Attention temperature de "+lastValue+" °C");
         }
 
         return 1;
     }
+
+    public void sendNotif(Context context,String text){
+        NotificationManager NM;
+        NM=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notify=new Notification(R.drawable.ic_stat_name,"Variation Detectée !",System.currentTimeMillis());
+        PendingIntent pending= PendingIntent.getActivity(context, 0, new Intent(), 0);
+        notify.setLatestEventInfo(context, "FurryWeather", text,pending);
+        NM.notify(0, notify);
+    }
+
 }

@@ -7,28 +7,20 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-
-/**
- * Created by Theo on 12/02/2015.
- */
 public class WeatherNotification extends Activity{
 
-    public void sendBasicNotification(String eventtext, Context ctx){
-        // Set the icon, scrolling text and timestamp
-        Notification notification = new Notification(R.drawable.ic_launcher,
-                "hey", System.currentTimeMillis());
+    Context context;
+    public WeatherNotification(Context context){
+        this.context = context;
+    }
 
-        // The PendingIntent to launch our activity if the user selects this
-        // notification
-        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-                new Intent(ctx, WeatherActivity.class), 0);
-
-        // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(ctx, "Title", eventtext,
-                contentIntent);
-
-        // Send the notification.
-        mNM.notify("Title", 0, notification);
+    public void sendNotification(String text){
+        NotificationManager NM;
+        NM=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notify=new Notification(android.R.drawable.stat_notify_more,"Variation Detectée !",System.currentTimeMillis());
+        PendingIntent pending= PendingIntent.getActivity(context, 0, new Intent(), 0);
+        notify.setLatestEventInfo(context, "FurryWeather", text,pending);
+        NM.notify(0, notify);
     }
 
 }

@@ -15,6 +15,7 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -44,7 +45,7 @@ public class WeatherService extends Service {
             new WeatherPreference(getApplicationContext()).setLatitude(String.valueOf(latitude));
             new WeatherPreference(getApplicationContext()).setLongitude(String.valueOf(longitude));
 
-            Toast.makeText(getBaseContext(),"Location : "+latitude+","+longitude,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getBaseContext(),"Location : "+latitude+","+longitude,Toast.LENGTH_SHORT).show();
             //Put new coordonates in the database
 
         }
@@ -71,7 +72,7 @@ public class WeatherService extends Service {
     }
     @Override
     public void onCreate(){
-        Toast.makeText(this,"Service created",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Service created",Toast.LENGTH_SHORT).show();
         //Gestion geolocalisation
         locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10000,5,onLocationChange);
@@ -118,12 +119,12 @@ public class WeatherService extends Service {
         timer.cancel();
         super.onDestroy();
         locationMgr.removeUpdates(onLocationChange);
-        Toast.makeText(this,"Service destroyed",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Bye",Toast.LENGTH_SHORT).show();
     }
 
     public int onStartCommand(Intent intent,int flags,int startId){
         //Seems to be the new method the other one is deprecated
-        Toast.makeText(this,"Service started",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Service started",Toast.LENGTH_SHORT).show();
         //return START_STICKY;
         return super.onStartCommand(intent,flags,startId);
     }
@@ -177,15 +178,19 @@ public class WeatherService extends Service {
                         wd.setDescription(details.getString("description"));
                         wd.setCondition(details.getString("main"));
                         wd.setWind(data.getJSONObject("wind").getDouble("speed"));
-                        Date date = new Date(data.getLong("dt")*1000);
-                        wd.setDate(date.getYear()+":"+date.getMonth()+":"+date.getDay()+" "+date.getHours()+":"+date.getMinutes());
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm");
+                        Date curDate = new Date();
+                        wd.setDate(dateFormat.format(curDate));
+                        //Date date = new Date(data.getLong("dt")*1000);
+                        //wd.setDate(date.getYear()+":"+date.getMonth()+":"+date.getDay()+" "+date.getHours()+":"+date.getMinutes());
                         //wd.setDate("2015:02:05 13:52");
                         wd.setCity(data.getString("name") + ", " + data.getJSONObject("sys").getString("country"));
                         wd.setTemperature(main.getDouble("temp"));
                         wds.insertWDS(wd);
+                        final double tempTemp = wd.getTemperature();
                         fetchHandler.post(new Runnable(){
                             public void run(){
-                                Toast.makeText(getApplicationContext(),"Data stored !",Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(),"Data stored ! (temp="+tempTemp+")",Toast.LENGTH_SHORT).show();
                             }
                         });
                         wds.close();
@@ -200,13 +205,18 @@ public class WeatherService extends Service {
                 LDE_VDA detect = new LDE_VDA();
                 WeatherDataSource wds = new WeatherDataSource(getApplicationContext());
                 wds.open();
-                ArrayList<WeatherData>dataToTransform = wds.getNLastDaysAverage(3);
+                final ArrayList<WeatherData>dataToTransform = wds.getNLastDaysAverage(3);
+                fetchHandler.post(new Runnable() {
+                    public void run() {
+                        //Toast.makeText(getApplicationContext(), "TestData=(" + dataToTransform.get(0).getTemperature() + ")", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 ArrayList<Double>dataToCompute = new ArrayList<Double>();
                 for(int i=0;i<dataToTransform.size();i++){
                     dataToCompute.add(Double.valueOf(dataToTransform.get(i).getTemperature()));
                 }
                 wds.close();
-                detect.computeShort(dataToCompute);
+                detect.computeShort(dataToCompute,getApplicationContext());
             }
         }.start();
 

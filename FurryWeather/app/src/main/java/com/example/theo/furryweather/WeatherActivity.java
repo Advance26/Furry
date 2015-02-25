@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -32,9 +32,6 @@ public class WeatherActivity extends ActionBarActivity {
         weatherService = new WeatherService();
         this.startService(new Intent(this,weatherService.getClass()));
 
-
-        WeatherNotification test = new WeatherNotification();
-        test.sendBasicNotification();
     }
 
     @Override
@@ -99,6 +96,7 @@ public class WeatherActivity extends ActionBarActivity {
         builder.setView(sw);
         final boolean switchState = new WeatherPreference(this.getApplicationContext()).getGeoLoc();
         Log.d("WeatherActivity","GeoLocSwitchStateBefore : "+switchState);
+
         sw.setChecked(switchState);
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -130,7 +128,7 @@ public class WeatherActivity extends ActionBarActivity {
 
     public void changeLocMode(boolean a){
         new WeatherPreference(this).setGeoLoc(a);
-        Toast.makeText(this,"GeoLoc is : "+a+new WeatherPreference(this).getGeoLoc(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"GeoLoc is : "+a+new WeatherPreference(this).getGeoLoc(),Toast.LENGTH_SHORT).show();
     }
 
 }

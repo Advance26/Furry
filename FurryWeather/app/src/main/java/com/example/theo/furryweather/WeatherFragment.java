@@ -80,9 +80,9 @@ public class WeatherFragment extends Fragment {
                 if(json == null){
                     handler.post(new Runnable(){
                         public void run(){
-                            Toast.makeText(getActivity(),
+                            /*Toast.makeText(getActivity(),
                                     "City : "+getActivity().getString(R.string.place_not_found),
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_LONG).show();*/
                         }
                     });
                     renderWeatherFromDB();
@@ -104,9 +104,9 @@ public class WeatherFragment extends Fragment {
                 if(json == null){
                     handler.post(new Runnable(){
                         public void run(){
-                            Toast.makeText(getActivity(),
+                            /*Toast.makeText(getActivity(),
                                     "GeoLoc : "+getActivity().getString(R.string.place_not_found),
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_LONG).show();*/
                         }
                     });
                     renderWeatherFromDB();//On recup le dernier enregistrement de la DB
@@ -154,7 +154,7 @@ public class WeatherFragment extends Fragment {
     public void renderWeatherFromDB(){
         handler.post(new Runnable() {
             public void run() {
-                Toast.makeText(getActivity(), "Will fetch data from DB", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Will fetch data from DB", Toast.LENGTH_SHORT).show();
             }
         });
         //Fetch data from DB
@@ -228,7 +228,7 @@ public class WeatherFragment extends Fragment {
         else{
             handler.post(new Runnable(){
                 public void run(){
-                    Toast.makeText(getActivity(),"La geolocalisation est active",Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity(),"La géolocalisation est active",Toast.LENGTH_SHORT);
                 }
             });
 
