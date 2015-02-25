@@ -12,6 +12,12 @@ public class WeatherData {
     private String condition;
     private String description;
     private double humidity;
+    private double pressure;
+    private int dt;
+    private int sunrise;
+    private int sunset;
+
+
     public WeatherData(){}
     public WeatherData(int id, String city, String date, double temperature, double wind, String condition, String description, double humidity) {
         this.id = id;
@@ -86,5 +92,55 @@ public class WeatherData {
 
     public void setHumidity(double humidity) {
         this.humidity = humidity;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
+    }
+
+    public int getDt() {
+        return dt;
+    }
+
+    public void setDt(int dt) {
+        this.dt = dt;
+    }
+
+    public int getSunrise() {
+        return sunrise;
+    }
+
+    public void setSunrise(int sunrise) {
+        this.sunrise = sunrise;
+    }
+
+    public int getSunset() {
+        return sunset;
+    }
+
+    public void setSunset(int sunset) {
+        this.sunset = sunset;
+    }
+
+    @Override
+    public String toString() {
+        return "WeatherData{" +
+                "id=" + id +
+                ", city='" + city + '\'' +
+                ", date='" + date + '\'' +
+                ", temperature=" + temperature +
+                ", wind=" + wind +
+                ", condition='" + condition + '\'' +
+                ", description='" + description + '\'' +
+                ", humidity=" + humidity +
+                ", pressure=" + pressure +
+                ", dt=" + dt +
+                ", sunrise=" + sunrise +
+                ", sunset=" + sunset +
+                '}';
     }
 }

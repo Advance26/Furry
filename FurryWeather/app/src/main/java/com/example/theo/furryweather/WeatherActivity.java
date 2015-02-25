@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 public class WeatherActivity extends ActionBarActivity {
 
+    private WeatherFragment weatherFrag = new WeatherFragment();
+    private WeatherService weatherService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,11 +26,11 @@ public class WeatherActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new WeatherFragment())
+                    .add(R.id.container, weatherFrag)
                     .commit();
         }
-
-        this.startService(new Intent(this,WeatherService.class));
+        weatherService = new WeatherService();
+        this.startService(new Intent(this,weatherService.getClass()));
 
 
         WeatherNotification test = new WeatherNotification();
@@ -55,6 +57,11 @@ public class WeatherActivity extends ActionBarActivity {
         }
         if(item.getItemId() == R.id.change_localisationMode){
             showLocalisationDialog();
+        }
+        if(item.getItemId() == R.id.exitApp){
+            stopService(new Intent(this,weatherService.getClass()));
+            this.finish();
+
         }
         return false;
 
@@ -88,23 +95,33 @@ public class WeatherActivity extends ActionBarActivity {
         builder.setTitle("Change Localisation Settings");
         builder.setMessage("Geolocalisation ");
         final Switch sw = new Switch(this);
-        builder.setView(sw);
 
+        builder.setView(sw);
+        final boolean switchState = new WeatherPreference(this.getApplicationContext()).getGeoLoc();
+        Log.d("WeatherActivity","GeoLocSwitchStateBefore : "+switchState);
+        sw.setChecked(switchState);
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(sw.isChecked()){
                     changeLocMode(true);
+                    WeatherFragment wf = (WeatherFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+                    wf.updateWeatherDataLocation(new WeatherPreference(getApplicationContext()).getLatitude(),
+                            new WeatherPreference(getApplicationContext()).getLongitude());
                 }
                 else{
                     changeLocMode(false);
+                    WeatherFragment wf = (WeatherFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+                    wf.updateWeatherDataCity(new WeatherPreference(getApplicationContext()).getCity());
                 }
             }
         });
+
+        changeLocMode(switchState);
         builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //Rien pour le moment ^^
+                //Il n'y a rien
             }
         });
 
@@ -113,7 +130,7 @@ public class WeatherActivity extends ActionBarActivity {
 
     public void changeLocMode(boolean a){
         new WeatherPreference(this).setGeoLoc(a);
-        Toast.makeText(this,"GeoLoc is : "+a,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"GeoLoc is : "+a+new WeatherPreference(this).getGeoLoc(),Toast.LENGTH_SHORT).show();
     }
 
 }

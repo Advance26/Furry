@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class WeatherDataSource {
     private SQLiteDatabase database;
     private DBManager dbm;
-    private String[] allColumns = {"id","city","date","temperature","wind","condition","description","humidity"};
+    private String[] allColumns = {"id","city","date","temperature","wind","condition","description","humidity","pressure","dt","sunrise","sunset"};
 
     public WeatherDataSource(Context context){
         dbm = new  DBManager(context);
@@ -45,6 +45,10 @@ public class WeatherDataSource {
         cv.put("condition",wd.getCondition());
         cv.put("description",wd.getDescription());
         cv.put("humidity",wd.getHumidity());
+        cv.put("pressure",wd.getPressure());
+        cv.put("dt",wd.getDt());
+        cv.put("sunrise",wd.getSunrise());
+        cv.put("sunset",wd.getSunset());
 
         database.insert("weather",null,cv);
 
@@ -54,8 +58,9 @@ public class WeatherDataSource {
         ArrayList<WeatherData> out = new ArrayList<>();
         Log.w("WeatherDataSource","Before the while");
         String query = "select id,city,dataDate,temperature," +
-                "wind,condition,description,humidity from weather" +
-                " order by dataDate DESC limit "+N;
+                "wind,condition,description,humidity,pressure," +
+                "dt,sunrise,sunset from weather" +
+                " order by dataDate DESC,id DESC limit "+N;
         //Pas de ';' en fin de requete
         Cursor cur = database.rawQuery(query,new String[]{});
 
@@ -71,6 +76,10 @@ public class WeatherDataSource {
             temp.setCondition(cur.getString(5));
             temp.setDescription(cur.getString(6));
             temp.setHumidity(cur.getDouble(7));
+            temp.setPressure(cur.getDouble(8));
+            temp.setDt(cur.getInt(9));
+            temp.setSunrise(cur.getInt(10));
+            temp.setSunset(cur.getInt(11));
             out.add(temp);
             i++;
         }

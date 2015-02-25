@@ -14,8 +14,11 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Theo on 23/01/2015.
@@ -32,7 +35,9 @@ public class WeatherFragment extends Fragment {
     Handler handler;
 
     public WeatherFragment(){
+
         handler = new Handler();
+
     }
 
     @Override
@@ -46,6 +51,8 @@ public class WeatherFragment extends Fragment {
         weatherIcon = (TextView)rootView.findViewById(R.id.weather_icon);
 
         weatherIcon.setTypeface(weatherFont);
+
+
         return rootView;
     }
 
@@ -55,11 +62,18 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
-        updateWeatherDataCity(new WeatherPreference(getActivity()).getCity());
+
+        if(new WeatherPreference(this.getActivity()).getGeoLoc() == false) {
+            updateWeatherDataCity(new WeatherPreference(getActivity()).getCity());
+        }
+        else{
+            updateWeatherDataLocation(new WeatherPreference(getActivity()).getLatitude(),new WeatherPreference(getActivity()).getLongitude());
+        }
+
     }
 
 
-    private void updateWeatherDataCity(final String city){
+    public void updateWeatherDataCity(final String city){
         new Thread(){
             public void run(){
                 final JSONObject json = RemoteFetch.getJSON(getActivity(), city);
@@ -67,11 +81,13 @@ public class WeatherFragment extends Fragment {
                     handler.post(new Runnable(){
                         public void run(){
                             Toast.makeText(getActivity(),
-                                    getActivity().getString(R.string.place_not_found),
+                                    "City : "+getActivity().getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                } else {
+                    renderWeatherFromDB();
+                }
+                else {
                     handler.post(new Runnable(){
                         public void run(){
                             renderWeather(json);
@@ -81,7 +97,7 @@ public class WeatherFragment extends Fragment {
             }
         }.start();
     }
-    private void updateWeatherDataLocation(final String latitude, final String longitude){
+    public void updateWeatherDataLocation(final String latitude, final String longitude){
         new Thread(){
             public void run(){
                 final JSONObject json = RemoteFetch.getJSON(getActivity(), latitude,longitude);
@@ -89,11 +105,13 @@ public class WeatherFragment extends Fragment {
                     handler.post(new Runnable(){
                         public void run(){
                             Toast.makeText(getActivity(),
-                                    getActivity().getString(R.string.place_not_found),
+                                    "GeoLoc : "+getActivity().getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                } else {
+                    renderWeatherFromDB();//On recup le dernier enregistrement de la DB
+                }
+                else {
                     handler.post(new Runnable(){
                         public void run(){
                             renderWeather(json);
@@ -133,6 +151,47 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    public void renderWeatherFromDB(){
+        handler.post(new Runnable() {
+            public void run() {
+                Toast.makeText(getActivity(), "Will fetch data from DB", Toast.LENGTH_SHORT).show();
+            }
+        });
+        //Fetch data from DB
+        WeatherDataSource wds = new WeatherDataSource(getActivity());
+        wds.open();
+        ArrayList<WeatherData> wd = wds.getNLastDaysAverage(1);
+        WeatherData lastData = null;
+        if(wd.size() >= 1){
+            lastData = wd.get(0);
+        }
+        else{
+            Log.d("WeatherFragment","Error while fetching data in db");
+            return;
+        }
+        Log.d("WeatherFragment","Will show : "+wd.toString());
+
+        cityField.setText(lastData.getCity());
+        detailsField.setText(
+                lastData.getDescription().toUpperCase(Locale.US) +
+                        "\n" + "Humidity: " + lastData.getHumidity() + "%" +
+                        "\n" + "Pressure: " + lastData.getPressure() + " hPa");
+
+        currentTemperatureField.setText(
+                String.format("%.2f", lastData.getTemperature())+ " ℃");
+
+        DateFormat df = DateFormat.getDateTimeInstance();
+        String updatedOn = df.format(new Date(lastData.getDt()*1000));
+        updatedField.setText("Last update: " + updatedOn);
+
+        /*setWeatherIcon(details.getInt("id"),
+                json.getJSONObject("sys").getLong("sunrise") * 1000,
+                json.getJSONObject("sys").getLong("sunset") * 1000);*/
+        wds.close();
+
+
+    }
+
     private void setWeatherIcon(int actualId, long sunrise, long sunset){
         int id = actualId / 100;
         String icon = "";
@@ -163,7 +222,28 @@ public class WeatherFragment extends Fragment {
     }
 
     public void changeCity(String city){
-        updateWeatherDataCity(city);
+        if(new WeatherPreference(this.getActivity()).getGeoLoc() == false) {
+            updateWeatherDataCity(city);
+        }
+        else{
+            handler.post(new Runnable(){
+                public void run(){
+                    Toast.makeText(getActivity(),"La geolocalisation est active",Toast.LENGTH_SHORT);
+                }
+            });
+
+        }
+    }
+
+
+    public void update(){
+        if(new WeatherPreference(this.getActivity()).getGeoLoc() == false) {
+            updateWeatherDataCity(new WeatherPreference(getActivity()).getCity());
+        }
+        else{
+            updateWeatherDataLocation(new WeatherPreference(getActivity()).getLatitude(),new WeatherPreference(getActivity()).getLongitude());
+        }
     }
 
 }
+

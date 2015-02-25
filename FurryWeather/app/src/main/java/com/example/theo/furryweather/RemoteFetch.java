@@ -1,6 +1,7 @@
 package com.example.theo.furryweather;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -9,9 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Theo on 23/01/2015.
- */
+
 public class RemoteFetch {
 
     private static final String OPEN_WEATHER_MAP_API =
@@ -74,6 +73,7 @@ public class RemoteFetch {
             // This value will be 404 if the request was not
             // successful
             if(data.getInt("cod") != 200){
+                Log.w("RemoteFetch",data.toString());
                 return null;
             }
 
@@ -84,6 +84,6 @@ public class RemoteFetch {
     }
 
     public static String getUrlLocation(String lat, String lng){
-        return "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lng;
+        return "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lng+"&units=metric";
     }
 }

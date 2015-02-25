@@ -15,4 +15,10 @@
         android:title="Change Loc. Mode"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/exitApp"
+        android:orderInCategory="3"
+        android:title="Exit"
+        app:showAsAction="never"/>
+
 </menu>
